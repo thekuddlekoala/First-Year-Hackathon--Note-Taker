@@ -1,7 +1,6 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
-import reflex as rx
-from rxconfig import config
 
+import reflex as rx
 import sqlite3
 
 conn = sqlite3.connect("NotesDB")
@@ -17,12 +16,9 @@ cursor.execute("""
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
     name TEXT,
-    password TEXT
+    
     credits INTEGER,
     isPremium BOOLEAN
-    DOB date TEXT NOT NULL -- store as 'YYYY-MM-DD'
-    profile_picture BLOB
-    email TEXT NOT NULL
 );
 
 -- ============================
@@ -42,9 +38,8 @@ CREATE TABLE notes (
     upvote INTEGER,
     downvote INTEGER,
     imageid INTEGER,
-    date_of_creation TEXT NOT NULL -- store as 'YYYY-MM-DD'
     tags TEXT,
-    
+    date_of_creation TEXT NOT NULL --
     -- ENUM visibility = {Public, Private, Shared}
     visibility TEXT CHECK(visibility IN ('Public', 'Private', 'Shared')),
     
@@ -70,8 +65,12 @@ CREATE TABLE note_shared_with (
                
 """)
 
+from rxconfig import config
+
+
 class State(rx.State):
     """The app state."""
+
 
 def index() -> rx.Component:
     # Welcome Page (Index)
