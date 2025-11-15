@@ -1,6 +1,5 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
-from rxconfig import config
 
 import sqlite3
 
@@ -81,7 +80,7 @@ def landingPage() -> rx.Component:
         rx.vstack(
             rx.link("Login", href="/login", style={"textDecoration": "none"}),
             rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
-            spacing="1em"
+            #spacing="1em"
         ),
         align_items="center",
         justify_content="center",

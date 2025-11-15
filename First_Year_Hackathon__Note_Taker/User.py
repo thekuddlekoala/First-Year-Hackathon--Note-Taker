@@ -5,7 +5,6 @@ DATE_FORMAT = "%d/%m/%Y"
 DB_FORMAT = "%d-%m-%Y"
 
 class User:
-
     def __init__(self, id: int, name: str, email: str, password: str, credits: int, dob: str):
         self.id = id
         self.name = name
