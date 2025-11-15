@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT,
     credits INTEGER,
     isPremium BOOLEAN,
-    DOB TEXT NOT NULL,  -- store as 'YYYY-MM-DD'
+    DOB TEXT NOT NULL,  -- store as 'DD-MM-YYYY'
     profile_picture BLOB,
     email TEXT NOT NULL
 )
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS notes (
     upvote INTEGER,
     downvote INTEGER,
     imageid INTEGER,
-    date_of_creation TEXT NOT NULL, -- store as 'YYYY-MM-DD'
+    date_of_creation TEXT NOT NULL, -- store as 'DD-MM-YYYY'
     tags TEXT,
     visibility TEXT CHECK(visibility IN ('Public', 'Private', 'Shared')),
     academic_level TEXT CHECK(academic_level IN ('GCSE', 'A-Level', 'University')),
