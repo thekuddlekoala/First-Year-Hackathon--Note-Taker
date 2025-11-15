@@ -108,6 +108,7 @@ def add_user(name: str, email: str, password: str, dob: str):
 # ============================================================
 
 class State(rx.State):
+<<<<<<< HEAD
 
     # Login fields
     login_email: str = ""
@@ -216,6 +217,17 @@ def landingPage() -> rx.Component:
             rx.link("Login", href="/login", style={"textDecoration": "none"}),
             rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
             spacing="1",
+=======
+    """The app state."""
+
+def landingPage() -> rx.Component:
+    return rx.vstack(
+        rx.heading("Welcome to Note Taker!", font_size="2em", mb="2em"),
+        rx.vstack(
+            rx.link("Login", href="/login", style={"textDecoration": "none"}),
+            rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
+            #spacing="1em"
+>>>>>>> parent of d4a197c (upload page complete)
         ),
         align_items="center",
         justify_content="center",
@@ -315,5 +327,8 @@ def signup_page() -> rx.Component:
 
 app = rx.App()
 app.add_page(landingPage, route="/")
+<<<<<<< HEAD
 app.add_page(login_page, route="/login")
 app.add_page(signup_page, route="/signup")
+=======
+>>>>>>> parent of d4a197c (upload page complete)
