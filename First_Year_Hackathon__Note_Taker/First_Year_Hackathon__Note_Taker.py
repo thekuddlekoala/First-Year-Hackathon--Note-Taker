@@ -1,5 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
+import Note
+import User
 
 import sqlite3
 
@@ -19,8 +21,8 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT,
     credits INTEGER,
     isPremium BOOLEAN,
-    DOB TEXT NOT NULL,  -- store as 'YYYY-MM-DD'
-    profile_picture BLOB,
+    DOB TEXT NOT NULL,  -- store as 'DD-MM-YYYY'
+    profile_picture TEXT,
     email TEXT NOT NULL
 )
 """)
@@ -45,7 +47,7 @@ CREATE TABLE IF NOT EXISTS notes (
     upvote INTEGER,
     downvote INTEGER,
     imageid INTEGER,
-    date_of_creation TEXT NOT NULL, -- store as 'YYYY-MM-DD'
+    date_of_creation TEXT NOT NULL, -- store as 'DD-MM-YYYY'
     tags TEXT,
     visibility TEXT CHECK(visibility IN ('Public', 'Private', 'Shared')),
     academic_level TEXT CHECK(academic_level IN ('GCSE', 'A-Level', 'University')),
@@ -242,15 +244,10 @@ def uploadPage() -> rx.Component:
 
 def landingPage() -> rx.Component:
     return rx.vstack(
-        rx.heading("Welcome to Note Taker!", font_size="2em", mb="2em", align="center"),
+        rx.heading("Welcome to Note Taker!", font_size="2", mb="2", align="center"),
         rx.vstack(
-            #rx.link("Login", href="/login", style={"textDecoration": "none"}),
-            #rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
-
-            #TODO WARNING temporary
-            rx.link("Upload", href="/upload", style={"textDecoration": "none"}, size="9"),
-
-            align= "center",
+            rx.link("Login", href="/login", style={"textDecoration": "none"}),
+            rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
             #spacing="1em"
         ),
         align_items="center",
@@ -259,7 +256,34 @@ def landingPage() -> rx.Component:
     )
 
 
+def login_page() -> rx.Component:
+    return rx.vstack(
+        rx.heading("Login", font_size="6xl", mb="4"),  # large heading
+        rx.vstack(
+            rx.input(
+                placeholder="Email",
+                value=State.email,
+                #on_change=State.set_email,
+                type="email",
+                width="64"  # Reflex width scale
+            ),
+            rx.input(
+                placeholder="Password",
+                value=State.password,
+                #on_change=State.set_password,
+                type="password",
+                width="64"
+            ),
+            rx.button("Login", #on_click=State.login, width="64"),
+            spacing="4",  # vertical spacing between inputs and button
+            align_items="center"
+        ),
+        rx.link("Back to Home", href="/", mt="2"),
+        align_items="center",       # center horizontally
+        justify_content="center",   # center vertically
+        height="100vh"              # full viewport height
+    )
+)
+
 app = rx.App()
 app.add_page(landingPage, route="/")
-app.add_page(uploadPage, route="/upload")
-
