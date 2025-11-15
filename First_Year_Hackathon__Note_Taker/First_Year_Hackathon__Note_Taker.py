@@ -66,6 +66,25 @@ CREATE TABLE note_shared_with (
 
 from rxconfig import config
 
+class User:
+    def __init__(self, id, name, credits, isPremium):
+        self.id : int = id
+        self.name : str = name
+        self.credits : int = credits
+        self.isPremium : bool = isPremium
+    
+    def _changePremium(self, state): # function only for the User class that sets current user's premium status to what it should be
+        if self.id: # Handle potential non-existing users
+            self.isPremium = state
+        else:
+            print(f'Placeholder Error - User {self.id} does not exist') # Add functionality to check if the user's id actually exists later on
+
+    def _changeCredits(self, new_credits): # Potential to add more parameters to handle HOW credits should be changed for respective user
+        if self.id: # Handle potential non-existing users
+            self.credits = new_credits # Calculating what credits should be set to, to be in other function
+        else:
+            print(f'Placeholder Error - User {self.id} does not exist') # Add functionality to check if the user's id actually exists later on
+
 
 class State(rx.State):
     """The app state."""
