@@ -4,24 +4,24 @@ import re
 # Hash a given string using the sha256 encryption algorithm
 def encryptSHA256(string: str) -> str:
     return hashlib.sha256(string.encode()).hexdigest()
-
+    
 # Subroutine for password validation
-def enterPassword() -> str:
+def enterPassword(pw_input: str) -> str:
     PASSWORD_PATTERN = r'^(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?])(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]{8,}$'
 
-    pw_input = input('Enter password: ')
     while not re.match(PASSWORD_PATTERN, pw_input):
-        pw_input = input('Enter password: ')
+        pass
+        # Add exception handling for front end where applicable
     
     return encryptSHA256(pw_input)
 
 # Subroutine for email validation
-def enterEmail() -> str:
+def enterEmail(email_input: str) -> str:
     EMAIL_PATTERN = r'^(?![.-])[a-zA-Z0-9._%+-]+(?<![.-])@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$'
 
-    email_input = input('Enter email: ')
     while not re.match(EMAIL_PATTERN, email_input):
-        email_input = input('Enter email: ')
+        pass
+        # Add exception handling for front end where applicable
     
     return email_input
 
