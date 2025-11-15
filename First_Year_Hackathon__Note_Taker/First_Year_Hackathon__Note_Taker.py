@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users (
     credits INTEGER,
     isPremium BOOLEAN,
     DOB TEXT NOT NULL,  -- store as 'DD-MM-YYYY'
-    profile_picture BLOB,
+    profile_picture TEXT,
     email TEXT NOT NULL
 )
 """)
