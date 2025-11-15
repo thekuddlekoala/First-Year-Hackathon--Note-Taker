@@ -423,28 +423,28 @@ class NoteDAO:
 
 
 class Note(NoteDAO):
-    # Initialize a new note object, given paramaters
-    def __init__(self, id: int, userid: int, imageid: int, tags: List[str], visbility: Literal["public", "private"], academicLevel: Literal["GCSE", "A Level", "Degree"]):
+    def __init__(self, id: int, userid: int, imageid: int, tags: list[str], visibility: Literal["public", "private"], academicLevel: Literal["GCSE", "A Level", "Degree"]):
         assert id > 0, "Note ID must be greater than 0"
         assert userid > 0, "User ID must be greater than 0"
         assert imageid > 0, "Image ID must be greater than 0"
-        assert academicLevel == "GCSE" or academicLevel == "A Level" or academicLevel == "Degree", "Academic Level must be GCSE, A Level or Degree"
+        assert academicLevel in ["GCSE", "A Level", "Degree"], "Academic Level must be GCSE, A Level or Degree"
        
-        super().__init__() # Call the initalisation of NoteDAO
+        super().__init__() # Call the initialisation of NoteDAO
 
         self.id = id
         self.userid = userid
         self.imageid = imageid
         self.tags = tags
-        self.visibility = visbility
+        self.visibility = visibility
         self.upvotes = 0
         self.downvotes = 0
         self.academicLevel = academicLevel
-    
+
     # Set the academic level of the note
     def setAcademicLevel(self, academicLevel: Literal["GCSE", "A Level", "Degree"]):
-        assert academicLevel == "GCSE" or academicLevel == "A Level" or academicLevel == "Degree", "Academic Level must be GCSE, A Level or Degree"
+        assert academicLevel in ["GCSE", "A Level", "Degree"], "Academic Level must be GCSE, A Level or Degree"
         self.academicLevel = academicLevel
+        self.update_academic_level(self.id, academicLevel)
         return
     
     # Get the academic level of the note
@@ -454,6 +454,7 @@ class Note(NoteDAO):
     # Set the upvotes of the note
     def setUpvotes(self, upvotes: int):
         self.upvotes = upvotes
+        self.update_upvotes(self.id, upvotes)
         return
     
     # Get the upvotes of the note
@@ -463,6 +464,7 @@ class Note(NoteDAO):
     # Set the downvotes of the note
     def setDownvotes(self, downvotes: int):
         self.downvotes = downvotes
+        self.update_downvotes(self.id, downvotes)
         return
 
     # Get the downvotes of the note
@@ -472,32 +474,39 @@ class Note(NoteDAO):
     # Increment the upvotes of the note
     def incrementUpvotes(self):
         self.upvotes += 1
+        self.increment_upvotes(self.id)
         return
 
     # Increment the downvotes of the note
     def incrementDownvotes(self):
         self.downvotes += 1
+        self.increment_downvotes(self.id)
         return
     
     # Decrement the upvotes of the note
     def decrementUpvotes(self):
         self.upvotes -= 1
+        self.decrement_upvotes(self.id)
         return
     
     # Decrement the downvotes of the note
     def decrementDownvotes(self):
         self.downvotes -= 1
+        self.decrement_downvotes(self.id)
         return
 
     # Get the vote ratio of the note
     def getVoteRatio(self) -> int:
-        return math.floor(self.upvotes / (self.upvotes + self.downvotes))
+        total_votes = self.upvotes + self.downvotes
+        if total_votes == 0:
+            return 0
+        return math.floor(self.upvotes / total_votes)
    
     # Set the visibility of the note
-    # visbility can be "public" or "private"
-    def setVisibility(self, visbility: Literal["public", "private"]):
-        assert visbility == "public" or visbility == "private", "Visibility must be public or private"
-        self.visibility = visbility
+    def setVisibility(self, visibility: Literal["public", "private"]):
+        assert visibility in ["public", "private"], "Visibility must be public or private"
+        self.visibility = visibility
+        self.update_visibility(self.id, visibility)
         return
     
     # Get the visibility of the note
@@ -507,11 +516,13 @@ class Note(NoteDAO):
     def addTag(self, tag: str):
         assert tag not in self.tags, "Tag already exists"
         self.tags.append(tag)
+        self.update_tags(self.id, self.tags)
         return
     
     def removeTag(self, tag: str):
         assert tag in self.tags, "Tag does not exist"
         self.tags.remove(tag)
+        self.update_tags(self.id, self.tags)
         return 
     
     def hasTag(self, tag: str) -> bool:
@@ -525,3 +536,52 @@ class Note(NoteDAO):
     
     def getImageId(self) -> int:    
         return self.imageid
+
+    # Additional method to refresh from database
+    def refreshFromDatabase(self):
+        """Refresh all attributes from the database"""
+        academic_level = self.get_academic_level(self.id)
+        if academic_level:
+            self.academicLevel = academic_level
+        
+        upvotes = self.get_upvotes(self.id)
+        if upvotes is not None:
+            self.upvotes = upvotes
+        
+        downvotes = self.get_downvotes(self.id)
+        if downvotes is not None:
+            self.downvotes = downvotes
+        
+        visibility = self.get_visibility(self.id)
+        if visibility:
+            self.visibility = visibility
+        
+        tags = self.get_tags(self.id)
+        if tags:
+            self.tags = tags
+
+    # Class method to load a note from database
+    @classmethod
+    def loadFromDatabase(cls, note_id: int):
+        """Load a note from database by ID"""
+        dao = NoteDAO()
+        
+        # Check if note exists
+        if not dao.note_exists(note_id):
+            return None
+        
+        # Get all the data
+        academic_level = dao.get_academic_level(note_id)
+        upvotes = dao.get_upvotes(note_id) or 0
+        downvotes = dao.get_downvotes(note_id) or 0
+        visibility = dao.get_visibility(note_id)
+        tags = dao.get_tags(note_id)
+        userid = dao.get_user_id(note_id)
+        imageid = dao.get_image_id(note_id)
+        
+        # Create and return Note object
+        note = cls(note_id, userid, imageid, tags, visibility, academic_level)
+        note.upvotes = upvotes
+        note.downvotes = downvotes
+        
+        return note
