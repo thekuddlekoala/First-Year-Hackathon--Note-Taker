@@ -21,10 +21,10 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     name TEXT,
     password TEXT,
-    credits INTEGER,
-    isPremium BOOLEAN,
+    credits INTEGER DEFAULT 0,
+    isPremium BOOLEAN DEFAULT FALSE,
     DOB TEXT NOT NULL,
-    profile_picture BLOB,
+    profile_picture TEXT,
     email TEXT NOT NULL UNIQUE
 )
 """)
