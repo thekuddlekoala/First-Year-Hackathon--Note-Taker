@@ -2,11 +2,16 @@
 import reflex as rx
 import Pages.uploadPage
 import sqlite3
+import bcrypt
+import re
+from datetime import datetime
+from Pages import loginPages 
+# ============================================================
+# DATABASE CONFIG (YOUR EXISTING NotesDB SETUP)
+# ============================================================
 
 conn = sqlite3.connect("NotesDB")
 cursor = conn.cursor()
-
-#Creating tables
 cursor.execute("PRAGMA foreign_keys = ON;")
 
 # ============================
@@ -19,9 +24,9 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT,
     credits INTEGER,
     isPremium BOOLEAN,
-    DOB TEXT NOT NULL,  -- store as 'YYYY-MM-DD'
+    DOB TEXT NOT NULL,
     profile_picture BLOB,
-    email TEXT NOT NULL
+    email TEXT NOT NULL UNIQUE
 )
 """)
 
@@ -45,7 +50,7 @@ CREATE TABLE IF NOT EXISTS notes (
     upvote INTEGER,
     downvote INTEGER,
     imageid INTEGER,
-    date_of_creation TEXT NOT NULL, -- store as 'YYYY-MM-DD'
+    date_of_creation TEXT NOT NULL,
     tags TEXT,
     visibility TEXT CHECK(visibility IN ('Public', 'Private', 'Shared')),
     academic_level TEXT CHECK(academic_level IN ('GCSE', 'A-Level', 'University')),
@@ -67,7 +72,6 @@ CREATE TABLE IF NOT EXISTS note_shared_with (
 )
 """)
 
-# Commit and close
 conn.commit()
 conn.close()
 
@@ -84,14 +88,26 @@ def landingPage() -> rx.Component:
 
             align= "center",
             #spacing="1em"
+# ============================================================
+# APP SETUP
+# ============================================================
+#
+def landingPage() -> rx.Component:
+    return rx.vstack(
+        rx.heading("Welcome to Note Taker!", font_size="2", mb="2"),
+        rx.vstack(
+            rx.link("Login", href="/login", style={"textDecoration": "none"}),
+            rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
+            spacing="1",
         ),
         align_items="center",
         justify_content="center",
-        height="100vh"
+        height="100vh",
     )
-
 
 app = rx.App()
 app.add_page(landingPage, route="/")
 app.add_page(Pages.uploadPage.page, route="/upload")
 
+app.add_page(loginPages.login_page, route="/login")
+app.add_page(loginPages.signup_page, route="/signup")
