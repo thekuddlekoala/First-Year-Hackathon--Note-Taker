@@ -1,14 +1,79 @@
 import math
-from typing import Literal 
+import sqlite3
+from typing import Literal, List
 
-class Note:
+class NoteDAO:
+    def __init__(self, db_path: str = "NotesDB"):
+        self.db_path = db_path
+
+    def _getConnection(self) -> sqlite3.Connection:
+        conn = sqlite3.connect(self.db_path)
+        conn.execute('PRAGMA foreign_keys = ON;')
+        return conn
+
+    """_DB suffix in the function name siginifies DAO function"""
+
+    def getTags_DB(self, note_id: int) -> List[str]:
+        try:
+            conn = self._getConnection(self)
+            cursor = conn.cursor()
+
+            cursor.execute()
+            
+            cursor.execute("SELECT tags FROM notes WHERE id = ?", (note_id,))
+            result = cursor.fetchone()
+
+            if result and result[0]:
+                tags = [tag.strip() for tag in result[0].split(',')]
+                return tags
+            return []
+    
+        except sqlite3.Error as e:
+            print(f'Database error: {e}')
+            return []
+    
+        finally:
+            conn.close()
+    
+    
+    def setAcademicLevel_DB(self, user_id: int, academic_level: str) -> bool:
+        try:
+            # Validate the academic level matches your database CHECK constraint
+            if academic_level not in ['GCSE', 'A-Level', 'University']:
+                print(f"Invalid academic level: {academic_level}")
+                return False
+
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+
+            # UPDATE the academic_level for the specific user
+            cursor.execute(
+                'UPDATE users SET academic_level = ? WHERE id = ?', 
+                (academic_level, user_id)
+            )
+            conn.commit()
+
+            # Return True if the update was successful (user exists and was updated)
+            return cursor.rowcount > 0
+
+        except sqlite3.Error as e:
+            print(f'Database Error: {e}')
+            return False
+        finally:
+            conn.close()
+
+
+
+class Note(NoteDAO):
     # Initialize a new note object, given paramaters
-    def __init__(self, id: int, userid: int, imageid: int, tags: list[str], visbility: Literal["public", "private"], academicLevel: Literal["GCSE", "A Level", "Degree"]):
+    def __init__(self, id: int, userid: int, imageid: int, tags: List[str], visbility: Literal["public", "private"], academicLevel: Literal["GCSE", "A Level", "Degree"]):
         assert id > 0, "Note ID must be greater than 0"
         assert userid > 0, "User ID must be greater than 0"
         assert imageid > 0, "Image ID must be greater than 0"
         assert academicLevel == "GCSE" or academicLevel == "A Level" or academicLevel == "Degree", "Academic Level must be GCSE, A Level or Degree"
        
+        super().__init__() # Call the initalisation of NoteDAO
+
         self.id = id
         self.userid = userid
         self.imageid = imageid
