@@ -21,11 +21,11 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     name TEXT,
     password TEXT,
-    credits INTEGER,
-    isPremium BOOLEAN,
-    DOB TEXT NOT NULL,  -- store as 'DD-MM-YYYY'
+    credits INTEGER DEFAULT 0,
+    isPremium BOOLEAN DEFAULT FALSE,
+    DOB TEXT NOT NULL,
     profile_picture TEXT,
-    email TEXT NOT NULL
+    email TEXT NOT NULL UNIQUE
 )
 """)
 
@@ -108,15 +108,114 @@ def add_user(name: str, email: str, password: str, dob: str):
 # ============================================================
 
 class State(rx.State):
-    """The app state."""
+
+    # Login fields
+    login_email: str = ""
+    login_password: str = ""
+    login_email_error: str = ""
+    login_password_error: str = ""
+
+    # Signup fields
+    email: str = ""
+    name: str = ""
+    dob: str = ""
+    password: str = ""
+
+    message: str = ""
+    message_color: str = "red"
+
+    # --------------------
+    # LOGIN VALIDATION
+    # --------------------
+    def on_email_change(self, value: str):
+        self.login_email = value
+        pattern = r"^(?![.-])[a-zA-Z0-9._%+-]+(?<![.-])@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$"
+
+        if not re.fullmatch(pattern, value):
+            self.login_email_error = "Please enter a valid email address."
+        else:
+            self.login_email_error = ""
+
+    def on_password_change(self, value: str):
+        self.login_password = value
+        pattern = (r"^(?=.*[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>\/?])"
+                   r"(?=.*[a-zA-Z])(?=.*\d).{8,}$")
+
+        if not re.fullmatch(pattern, value):
+            self.login_password_error = "Password must be 8+ chars, include a number and symbol."
+        else:
+            self.login_password_error = ""
+
+    # --------------------
+    # SIGNUP VALIDATION
+    # --------------------
+    def validate_email(self):
+        return re.match(r"^[\w\.-]+@[\w\.-]+\.\w+$", self.email)
+
+    def validate_password(self):
+        pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
+        return re.match(pattern, self.password)
+
+    def validate_name(self):
+        return len(self.name.strip()) >= 2
+
+    def validate_dob(self):
+        try:
+            dob_date = datetime.strptime(self.dob, "%Y-%m-%d")
+            return dob_date < datetime.now()
+        except:
+            return False
+
+    # --------------------
+    # SIGNUP SUBMIT
+    # --------------------
+    def submit(self):
+
+        if not self.validate_email():
+            self.message = "Invalid email address!"
+            return
+
+        if not self.validate_name():
+            self.message = "Name must be at least 2 characters!"
+            return
+
+        if not self.validate_dob():
+            self.message = "Invalid date of birth!"
+            return
+
+        if not self.validate_password():
+            self.message = (
+                "Password must be 8+ chars, include uppercase, lowercase, number & special character."
+            )
+            return
+
+        if email_exists(self.email):
+            self.message = "Email already registered!"
+            return
+
+        add_user(self.name, self.email, self.password, self.dob)
+
+        self.message = "Account created successfully!"
+        self.message_color = "green"
+
+        # Reset fields
+        self.email = ""
+        self.name = ""
+        self.password = ""
+        self.dob = ""
+
+
+# ============================================================
+# PAGES
+# ============================================================
 
 def landingPage() -> rx.Component:
     return rx.vstack(
-        rx.heading("Welcome to Note Taker!", font_size="2", mb="2", align="center"),
+        rx.heading("Welcome to Note Taker!", font_size="2", mb="2"),
         rx.vstack(
             rx.link("Login", href="/login", style={"textDecoration": "none"}),
             rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
-            spacing="1"
+            spacing="1",
         ),
         align_items="center",
         justify_content="center",
@@ -217,3 +316,4 @@ def signup_page() -> rx.Component:
 app = rx.App()
 app.add_page(landingPage, route="/")
 app.add_page(login_page, route="/login")
+app.add_page(signup_page, route="/signup")
