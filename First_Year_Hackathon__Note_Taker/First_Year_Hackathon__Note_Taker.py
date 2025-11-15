@@ -76,11 +76,11 @@ class State(rx.State):
 
 def landingPage() -> rx.Component:
     return rx.vstack(
-        rx.heading("Welcome to Note Taker!", font_size="2em", mb="2em"),
+        rx.heading("Welcome to Note Taker!", font_size="2", mb="2"),
         rx.vstack(
             rx.link("Login", href="/login", style={"textDecoration": "none"}),
             rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
-            spacing="1em"
+            spacing="1"
         ),
         align_items="center",
         justify_content="center",
@@ -94,19 +94,19 @@ def login_page() -> rx.Component:
         rx.vstack(
             rx.input(
                 placeholder="Email",
-                value=State.email,
+                #value=State.email,
                 #on_change=State.set_email,
                 type="email",
                 width="96",  # width value from 0-96 scale
             ),
             rx.input(
                 placeholder="Password",
-                value=State.password,
+                #value=State.password,
                 #on_change=State.set_password,
                 type="password",  # hides input
                 width="96",
             ),
-            rx.button("Login", on_click=State.login, width="96"),
+            rx.button("Login", #on_click=State.login, width="96"),
             spacing="4",  # valid spacing
             align_items="center"
         ),
@@ -115,7 +115,9 @@ def login_page() -> rx.Component:
         justify_content="center",
         height="100vh"
     )
+)
+
 
 app = rx.App()
 app.add_page(landingPage, route="/")
-app.add_page(login_page, route="/landingPage")
+app.add_page(login_page, route="/login")
