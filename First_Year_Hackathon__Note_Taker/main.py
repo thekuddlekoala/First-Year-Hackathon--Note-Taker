@@ -22,6 +22,7 @@ CREATE TABLE users (
     isPremium BOOLEAN
     DOB date TEXT NOT NULL -- store as 'YYYY-MM-DD'
     profile_picture BLOB
+    email TEXT NOT NULL
 );
 
 -- ============================
