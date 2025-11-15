@@ -1,5 +1,7 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
 import reflex as rx
+import Note
+import User
 
 import sqlite3
 
@@ -90,33 +92,32 @@ def landingPage() -> rx.Component:
 
 def login_page() -> rx.Component:
     return rx.vstack(
-        rx.heading("Login", font_size="4xl", mb="4"),  # large heading
+        rx.heading("Login", font_size="6xl", mb="4"),  # large heading
         rx.vstack(
             rx.input(
                 placeholder="Email",
-                #value=State.email,
+                value=State.email,
                 #on_change=State.set_email,
                 type="email",
-                width="96",  # width value from 0-96 scale
+                width="64"  # Reflex width scale
             ),
             rx.input(
                 placeholder="Password",
-                #value=State.password,
+                value=State.password,
                 #on_change=State.set_password,
-                type="password",  # hides input
-                width="96",
+                type="password",
+                width="64"
             ),
-            rx.button("Login", #on_click=State.login, width="96"),
-            spacing="4",  # valid spacing
+            rx.button("Login", #on_click=State.login, width="64"),
+            spacing="4",  # vertical spacing between inputs and button
             align_items="center"
         ),
         rx.link("Back to Home", href="/", mt="2"),
-        align_items="center",
-        justify_content="center",
-        height="100vh"
+        align_items="center",       # center horizontally
+        justify_content="center",   # center vertically
+        height="100vh"              # full viewport height
     )
 )
-
 
 app = rx.App()
 app.add_page(landingPage, route="/")
