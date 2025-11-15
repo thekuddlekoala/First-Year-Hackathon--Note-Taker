@@ -29,6 +29,10 @@ class User:
             self.isPremium = state
         else:
             print('Temp error: Current user ID does not exist')
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 2dd7ee5 (Deprecate user-related methods in User.py)
 
     def changeProfileImage(self, img_url: str):
         if self.id: # Proper exception handling to be added once databse is fully implemeneted
