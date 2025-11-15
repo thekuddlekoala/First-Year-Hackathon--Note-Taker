@@ -89,6 +89,10 @@ class User(UserDAO):
         self.pfp_url = "https://github.com/thekuddlekoala/First-Year-Hackathon--Note-Taker/blob/65098634cefbed156726c3657a1a14e94680741c/assets/defaultuser.png?raw=true"  
         self.email = email
 
+    """========================="""
+    """DEPRECATED"""
+    """========================="""
+    
     def changeCredits(self, new_credits: int):
         if self.userExists_DB(self.id): # Proper exception handling to be added once database is fully implemeneted
             self.credits = new_credits if new_credits >= 0 else 0
@@ -100,6 +104,10 @@ class User(UserDAO):
             self.isPremium = state
         else:
             print('Temp error: Current user ID does not exist')
+    
+    """========================="""
+    """DEPRECATED"""
+    """========================="""
 
 
     def changeProfileImage(self, img_url: str):
