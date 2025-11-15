@@ -78,6 +78,22 @@ conn.close()
 
 def landingPage() -> rx.Component:
     return rx.vstack(
+        rx.heading("Welcome to Note Taker!", font_size="2em", mb="2em", align="center"),
+        rx.vstack(
+            #rx.link("Login", href="/login", style={"textDecoration": "none"}),
+            #rx.link("Sign Up", href="/signup", style={"textDecoration": "none"}),
+
+            #TODO WARNING temporary
+            rx.link("Upload", href="/upload", style={"textDecoration": "none"}, size="9"),
+
+            align= "center",
+            #spacing="1em"
+# ============================================================
+# APP SETUP
+# ============================================================
+#
+def landingPage() -> rx.Component:
+    return rx.vstack(
         rx.heading("Welcome to Note Taker!", font_size="2", mb="2"),
         rx.vstack(
             rx.link("Login", href="/login", style={"textDecoration": "none"}),
@@ -92,5 +108,6 @@ def landingPage() -> rx.Component:
 app = rx.App()
 app.add_page(landingPage, route="/")
 app.add_page(Pages.uploadPage.page, route="/upload")
+
 app.add_page(loginPages.login_page, route="/login")
 app.add_page(loginPages.signup_page, route="/signup")
